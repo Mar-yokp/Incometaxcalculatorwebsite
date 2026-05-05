@@ -66,6 +66,14 @@ export default function App() {
   const additionalTaxUSD = additionalTax / exchangeRate;
   const effectiveTaxRateOnYearly = yearlyIncomeUSD > 0 ? (additionalTaxUSD / yearlyIncomeUSD) * 100 : 0;
 
+  // Calculate net income for the month with one-time payment
+  const monthlyNetFromMonthlySalaryILS = (monthlyIncomeUSD * exchangeRate) - (taxMonthlyOnly / 12) - monthlySubtractionsILS;
+  const monthlyNetFromMonthlySalaryUSD = monthlyIncomeUSD - (taxMonthlyOnly / exchangeRate / 12) - (monthlySubtractionsILS / exchangeRate);
+  const netOneTimeIncomeILS = (yearlyIncomeUSD * exchangeRate) - additionalTax;
+  const netOneTimeIncomeUSD = yearlyIncomeUSD - additionalTaxUSD;
+  const totalIncomeInMonthWithOneTimeILS = monthlyNetFromMonthlySalaryILS + netOneTimeIncomeILS;
+  const totalIncomeInMonthWithOneTimeUSD = monthlyNetFromMonthlySalaryUSD + netOneTimeIncomeUSD;
+
   const formatNumber = (num: number) => num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
@@ -346,6 +354,22 @@ export default function App() {
               <span className="text-gray-700">Net Monthly Income Equivalent (USD):</span>
               <span className="font-semibold text-lg text-gray-900">${formatNumber(netMonthlyIncomeUSD)}</span>
             </div>
+
+            {yearlyIncomeUSD > 0 && (
+              <>
+                <div className="pt-4 pb-2">
+                  <div className="h-px bg-green-300 my-2"></div>
+                </div>
+                <div className="flex justify-between items-center py-4 bg-gradient-to-r from-green-200 to-emerald-200 px-5 rounded-xl border-2 border-green-300">
+                  <span className="text-green-900 font-semibold text-lg">The Month with One-Time Payment (ILS):</span>
+                  <span className="font-bold text-2xl text-green-800">₪{formatNumber(totalIncomeInMonthWithOneTimeILS)}</span>
+                </div>
+                <div className="flex justify-between items-center py-4 bg-gradient-to-r from-green-200 to-emerald-200 px-5 rounded-xl border-2 border-green-300">
+                  <span className="text-green-900 font-semibold text-lg">The Month with One-Time Payment (USD):</span>
+                  <span className="font-bold text-2xl text-green-800">${formatNumber(totalIncomeInMonthWithOneTimeUSD)}</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
